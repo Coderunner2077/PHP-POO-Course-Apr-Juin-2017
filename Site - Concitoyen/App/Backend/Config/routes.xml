@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes>
+	<route url="/admin/deconnecter.html" module="Admin" action="deauthenticate" />
+	<route url="/(?:espace-membre-(\d+)|admin)/news-delete-(\d+)\.html" module="News" action="delete" vars="mem,id" />
+	<route url="/admin/" module="News" action="index" />
+	<route url="/(?:espace-membre-([0-9]+)|admin)/update-comment-([0-9]+)\.html" module="News" action="updateComment" vars="mem,id" />
+	<route url="/(?:espace-membre-([0-9]+)|admin)/delete-comment-([0-9]+)\.html" module="News" action="deleteComment" vars="mem,id" />
+	<route url="/(?:espace-membre-([0-9]+)|admin)/news-insert\.html" module="News" action="insert" vars="mem" />
+	<route url="/(?:espace-membre-(\d+)|admin)/news-update-(\d+)\.html" module="News" action="update" vars="mem,id" />
+</routes>

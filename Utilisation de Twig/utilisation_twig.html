@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Utilisation de Twig, un moteur de templates !</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+                                                      <h1>Utilisation de Twig</h1>
+                                                      
+Twig est un moteur de templates PHP. La syntaxe du moteur est énormément  inspirée de <a href="http://jinja.pocoo.org/">Jinja</a>, le moteur
+de templates du framework web Python <a href="http://www.django-fr.org/">Django</a>. 
+
+<h2>I./ Présentation du moteur de templates Twig</h2>
+1.) Fonctionnement
+
+Pour voir directement comment fonctionne Twig, je vais prendre un exemple : la création d'un blog classique, enfin, juste les grandes lignes.
+
+Réf <a href="blog1.php">blog1</a>
+
+Le moteur de templates va m'obliger à utiliser deux fichiers (plus si j'utilise le modèle MVC). Je vais d'une part avoir un fichier PHP avec
+l'obtention du contenu en base de données, des variables, la gestion des sessions, etc. et un fichier template qui gérera l'affichage de
+mes pages. Normalement, plus aucun code HTML ne doit apparaître dans mes fichiers PHP.
+
+Voici donc ce que pourrait donner mon exemple précédent avec un moteur de templates :
+
+Réf <a href="blog2.php">blog2</a>
+
+<h2>II./ Mise en place</h2>
+Il faut tout d'abord le télécharger...
+
+1.) Téléchargement
+a.) Via une archive
+
+Je me rends sur le <a href="https://twig.sensiolabs.org/">site</a> officiel de Twig et je clique sur <strong>Install now</strong>. Je
+décompresse l'archive et copie les fichiers  dans un dossier nommé "twig" dans le dossier de mon site. Je peux le nommer autrement,
+mais pas dans ce cours. 
+
+b.) Via git
+
+Si je veux passer par Git, il me suffit de me placer dans le dossier de mon site et de faire : 
+
+<strong>
+git clone http://github.com/fabpot/twig
+</strong>
+Un dossier twig contenant les fichiers sources va être créé. 
+
+c.) Via subversion
+
+Pour cloner le dépôt SVN, je me place dans le répertoire de mon projet et je tape :
+
+<strong>
+svn co http://svn.twig-project.org/trunk twig
+</strong>
+
+d.) Via Composer ??!
+
+2.) Mise en place
+
+Si je le souhaite, je peux supprimer tous les fichiers et dossier sauf le dossier lib et son contenu. Mais il vaut mieux laisser le
+dossier tel quel, sans changer les fichiers de place.
+
+Twig est un moteur de templates réalisé avec le langage PHP en orienté objet. Il va donc falloir créer une instance des classes en question. 
+Voici donc le code que je dois mettre en début de chaque fichier : (Mais avant tout, il faudra créer un dossier "templates" contenant les 
+templates de mon site) 
+
+<strong>
+require_once __DIR__.'/vendor/autoload.php';
+
+$loader = new Twig_Loader_Filesystem('templates'); // Dossier contenant les templates
+$twig = new Twig_Environment($loader, array('cache' => false));
+</strong>
+
+Le code ici est assez simple. On inclut le fichier  Autoloader.php. Ensuite, on indique le fichier où se trouvent mes templates. Pour 
+finir, je demande à Twig d'aller chercher  les templates dans le dossier indiqué précédemment et je lui indique quelques options pour plus de
+"souplesse" pendant le développement de mon projet. D'ailleurs, ici, je n'ai mis que le cache, mais il y a d'autres options possibles : 
+
+	-	cache : prend en argument le dossier où je stockerai les templates ou bien false pour ne pas s'en servir. Il est préconisé de le mettre
+			à false pendant la phase de développement
+	-	charset : par défaut à utf-8, définit l'encodage de mon projet
+	-	autoescape : échappe automatiquement les variables. Le code HTML, contenu dedans n'est donc pas interprété. Par défaut à true.
+	
+Pour plus d'options, voici le <a href="https://twig.sensiolabs.org/doc/2.x/api.html#environment-options">lien</a> vers la docu.
+
+Je peux également mettre plusieurs dossiers contenant les templates. En sachant que Twig va d'abord regarder dans le premier, puis le 
+suivant et ainsi de suie. Voici le code demandant à Twig d'aller charcher dans deux dossiers différents , mais je peux en mettre plus : 
+
+<strong>
+$loader = Twig_Loader_Filesystem(array('templates', 'views'));
+</strong>
+
+<h2>III./ Mon premier template</h2>
+
+Je crée un fichier appelé index.twig dans le dossier dans lequel je stocke mes templates.
+
+Note : Ici, j'ai mi "twig" comme extension mais en fait, je peux mettre ce que je veux. La plupart du temps, il s'agit de html ou tpl mais
+je peux mettre txt, etc.
+
+A l'intérieur, j'y mets le code suivant : 
+
+<strong>
+Hello {{ nom }} !
+</strong>
+
+Ensuite, je crée un fichier à la racine de mon site appelé <strong>index.php</strong> et j'y mets le code suivant (sans oublier d'y inclure
+le fichier contenant le code qui instancie le moteur) :
+
+<strong>
+$template = $twig->loadTemplate('index.twig');
+echo $template->render(array('nom' => 'Moto'));
+</strong>
+
+Je peux aussi écrire ce qu'il y a au-dessus de cette façon : 
+
+<strong>
+echo $twig->render('index.twig', array('nom' => 'Moto'));
+</strong>
+
+...c'est plus court.
+
+Dans cet exemple, j'ai mis du texte entre guillemets, mais rien ne m'empêche de mettre des variables, des tableaux, etc. 
+
+<h2>IV./ Syntaxe de base</h2>
+Je verrai ici seulement ce que je n'avais pas encore vu à mon précédent cours sur Twig.
+
+1.) Les filtres
+
+J'avais vu que pour éviter d'échapper du code HTML dans une variable, je devais lui appliquer le filtre <strong>raw</strong>. Pour faire
+exactement l'inverse, dans le cas où le code HTML n'est pas échappé par défaut, j'applique l'un des deux filtres suivants : 
+
+	-	<strong>escape</strong>
+	-	<strong>e</strong>
+	
+Pour voir la liste complète des filtres, cliquer <a href="https://twig.sensiolabs.org/doc/2.x/filters/index.html">ici</a>.
+
+2.) Les filtres sur les blocs
+
+Si je le souhaite, plutôt que d'appliquer un filtre à chacune de mes variables, si je compte le faire sur beaucoup de variables ou une
+partie de mon site en particulier, j'applique le filtre à un bloc entier : 
+
+<strong>
+{% filter upper %}
+	je vais être écrit en majuscule
+	{{ moi_aussi }}
+{% endfilter %}
+</strong>
+
+Je peux aussi chaîner les filtres en en mettant plusieurs à la suite : 
+
+<strong>
+{% filter upper|escape %}
+	je vais être écrit en majuscule <em>et échappé</em>
+{% endfilter %}
+</strong>
+
+Concernant le bloc <strong>escape</strong>, un bloc spécial a été prévu à cet effet. Ainsi, si par exemple j'ai mis lors de l'initialisation
+de Twig <strong>autoescape</strong> à <strong>true</strong>, je peux faire ceci : 
+
+<strong>
+{% autoescape false %}
+	<strong>je vais être affiché en gras</strong>
+{% endautoescape %}
+</strong>
+
+3.) Les tests utiles (les built-in tests)
+
+Les tests utiles me permettent de réaliser des conditions plus "poussées" et plus intuitives. J'en ai déjà vu au moins un : 
+
+<strong>
+defined
+</strong>
+
+La particularité de ces tests est que je les fais précéder par l'opérateur <strong>is</strong>.
+
+a./ divisibleby
+
+<strong>divisibleby</strong> permet de savoir si ma variable est divisible par un certain nombre : 
+
+<strong>
+{% if equipe.volley is divisibleby(6) %}
+	L'équipe sera divisé en 2 équipes de 6.
+{% endif %}
+</strong>
+
+b./ empty
+
+Vérifie si une variable est vide ou pas :
+
+<strong>
+{% if equipe.volley is empty %}
+	Le match est annulé.
+{% endif %}
+</strong>
+
+Pour voir la liste complète des tests utiles, cliquer <a href="https://twig.sensiolabs.org/doc/2.x/tests/index.html">ici</a>.
+
+4.) La boucle for
+
+Pour faire itérer i de 0 à 50, je fais : 
+
+<strong>
+{% for i in 0..50 %}
+	Ceci est la ligne {{ i }}
+{% endfor %}
+</strong>
+
+En sachant que cela marche aussi avec des lettres :
+
+<strong>
+{% for lettre in 'a'..'z' %}
+	La lettre {{ lettre }} est la lettre numéro {{ loop.index }} de l'alphabet.
+{% endfor %}
+</strong>
+
+Depuis la version 1.2 de Twig, il est possible de lancer une boucle selon une condition dans le même "bloc". Voici un exemple : 
+
+<strong>
+{% for joueur in club if equipe is not empty %}
+	Le joueur {{ joueur.nom }} joue dans l'équipe {{ joueur.equipe }}
+{% endfor %}
+</strong>
+
+5.) Définir des variables
+
+La logique d'un moteur de templates veut qu'on sépare les variables et les fonction php de l'affichage du contenu. Déclarer des variables
+dans un template casse la logique du système. Néanmoins, voici le procédé :
+
+<strong>
+{% set var = "val" %}
+</strong>
+
+Je peux aussi définir des variables comme en JavaScript. C'est-à-dire en mettant une seule fois "set" et en mettant à la suite les 
+différentes variables séparées par des virgules :
+
+<strong>
+{% set mascotte, os = 'beastie', 'bsd' %} <!--  ?! -->
+</strong>
+
+<h2>V./ Quelques ajouts pratiques</h2>
+
+Voici quelques fonctions, pas indispensables, mais qui peuvent se révéler utiles
+
+1.) Les includes
+
+Je n'ai pas vu dans l'autre cours toutes les facettes de cette fonction. Pour rappel, si je souhaite juste inclure des templates comme
+avec la fonction <strong>include</strong> de PHP, je fais :
+
+<strong>
+{% include 'header.twig' %}
+</strong>
+
+On peut aussi inclure des pages tout en leur restreignant l'accès à certaines variables :
+
+<strong>
+{% inclue 'fichier.twig' with {'var': 'val'} only %}
+</strong>
+
+Ici, la page n'aura accès qu'à la variable <strong>var</strong>. Le <strong>only</strong> lui empêche d'accéder aux autres. Je peux bien
+évidemment enlever le <strong>only</strong> pour que la page accède aux autres variables. 
+
+On peut également inclure des pages en fonction d'une condition :
+
+<strong>
+{% include online ? 'options.twig' : 'connexion.twig' %}
+</strong>
+
+Un dernier point sur les include est le fait que je peux inclure un template, lui passer des variables ou lui restreindre l'accès à 
+certaines et indiquer à Twig que si le template est inexistant, aucune erreur ne sera renvoyée.
+
+<strong>
+{% include "sidebar.html" ignore missing %}
+{% include "sidebar.html" ignore missing with {'foo': 'bar'} %}
+{% include "sidebar.html" ignore missing only %}
+</strong>
+
+2.) Les imports
+
+Twig propose de créer un sytème équivalent aux helpers. Prenons un exemple tiré de la documentation. Supposons que cette page s'appelle 
+<strong>forms.html</strong> :
+
+<strong>
+{% macro input(name, value, type, size) %}
+	&lt; input type="{{ type|default('text') }}" name="{{ name }}" value="{{ value|e }}" size="{{ size|default(20) }}" />
+{% endmacro %}
+
+{% macro textarea(name, value, rows, cols) %}
+	&lt; textarea name="{{ name }}" rows="{{ rows|default(10) }}" cols="{{ cols|default(40) }}">{{ value|e }}&lt; /textarea>
+{% endmacro %}
+</strong>
+
+Et maintant dans mon template, je mets le code suivant :
+
+<strong>
+{% import 'forms.html' as forms %}
+
+<dl>
+	<dt>Username</dt>
+	<dd>{{ forms.input('username') }}</dd>
+	<dt>Password</dt>
+	<dd>{{ forms.input('pass', none, 'password') }}</dd>
+</dl>
+<p>{{ forms.textarea('comment') }}</p>
+</strong>
+
+Cette fonctionnalité permet un réel gain de temps pour réaliser des formulaires !
+
+<h2>VI./ Fonctionnalités côté PHP</h2>
+On va voir ici certains points intéressants côté PHP
+
+1.) Modifier les tags
+
+Par défaut, Twig utilise la syntaxe Jinja. Pour afficher une variable, il faut faire {{ variable }}, etc. Twig permet de modifier ces tags.
+Je peux par exemple mettre les tags <strong>erb</strong> (moteur de template Ruby présent dans <strong>Ruby on Rails</strong>) et 
+<strong>Sinatre</strong> pour ne citer qu'eux) :
+
+<strong>
+$syntaxe = new Twig_Lexer($twig, array(
+	'tag_comment' => array('#', '#'),
+	'tag_block' => array('&lt; %', '%>'),
+	'tag_variable' => array('&lt; %=', '%>')
+));
+</strong>
+
+Ensuite, il faut indiquer au moteur que je veux modifier la syntaxe dans mes templates :
+
+<strong>
+$twig->setLexer($syntaxe);
+</strong>
+
+En sachant que la variable <strong>$twig</strong> représente l'instance de la classe <strong>Twig_Environment</strong>. 
+
+2.) Etendre Twig
+
+Les personnes utilisant des moteurs de templates sont nombreuses. Mais tout le monde ne l'utilise pas pour des projets de même taille. 
+Twig peut donc être "étendu", c'est-à-dire qu'on peut lui rajouter des fonctionnalités très simplement grâce à des méthodes  qui font tout
+le travail à notre place. Cela m'évite de toucher au code source pour ajouter un simple filtre par exemple. 
+
+Voyons donc comment ajouter nos propres filtres et objets.
+
+a./ Ajouter un objet "global"
+
+Un objet global, avec Twig, est un objet accessible depuis n'imorte quel template. La documentation  montre, par exemple, comment rajouter
+un objet "text" ayant une méthode <strong>lipsum</strong>. 
+
+Pour intégrer cet objet, d'abord, il faut créer un fichier contenant une certaine classe : 
+
+<strong>
+class Text {
+
+	protected $lipsum_text = 'Lorem ipsum dolor sit amer';
+	
+	/**
+	 * @param none
+	 * @return lipsum_text
+	 */
+	
+	public function lipsum() {
+		return $this->lipsum_text;
+	}
+}
+</strong>
+
+Ensuite, j'indique à Twig que je veux ajouter mon objet dans les templates (il faut que le fichier contenant la classe soit inclus dans le
+fichier contenant cette inscruction) :
+
+<strong>
+$twig->addGlobal('text', new Text());
+</strong>
+
+Le premier argument représente le nom de mon objet dans les templates et le second est une instance de la classe que j'ai précédemment créée.
+Et maintenant, dans mes templates, je peux faire :
+
+<strong>
+Voici un texte : &lt; br />
+{{ text.lipsum() }}
+</strong>
+
+b./ Ajouter des filtres 
+
+C'est la même démarche à suivre que précédemment. Ici, je crée une fonction (pas forcément une méthode de classe) et je demande à Twig
+de l'ajouter au parseur. Voyons commet ajouter le filtre <strong>lower</strong> (même s'il existe déjà, c'est pour l'exemple) :
+
+<strong>
+$twig->addFilter('lower', new Twig_Filter_Function('strtolower')); 
+</strong>
+
+Ici, je n'ai pas eu à créer la fonction car elle est native mais je peux mettre les miennes sans aucun problème. 
+
+Je peux aussi appeler la méthode d'une classe mais <strong>attention</strong>, il faut que la méthode soit statique. Par exemple :
+
+<strong>
+$twig->addFilter('monFiltre', new Twig_Filter_Function('MaClasse::maMethode'));
+</strong>
+
+Pour finir, voici quelques liens utiles : 
+
+	-	<a href="https://twig.sensiolabs.org/doc/2.x/">La documentation Twig</a> : à mettre dans mes favoris
+	-	<a href="https://github.com/fabpot/Twig/pulls">La page de rapports de bugs</a>
+	-	<a href="https://github.com/fabpot/Twig">Dépôt Github</a> : ce dépôt contient les sources du projet, au cas où je veux voir comment
+			fonctionne le moteur.
+			
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- Javascript de Bootstrap -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="../my_bootstrap.js" type="text/javascript"></script>
+</body>
+</html>

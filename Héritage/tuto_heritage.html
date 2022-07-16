@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Héritage en PHP</title>
+</head>
+<body>
+
+A peu près, le même fonctionnement de l'héritage qu'en Java.
+
+Attention : Si je redéfinis une méthode, sa visibilité doit être la même ou plus permissive que
+dans la classe parente. Si tel n'est pas le cas, une erreur fatale sera levée. Par exemple, je 
+ne peux pas redéfinir une méthode en disant qu'elle est privée, mais je peux redéfinir une méthode
+privée en disant qu'elle est privée ou publique.
+
+Sinon, toute classe en POO peut être héritée jusqu'à l'infini si elle ne spécifie pas le 
+contraire (ie si elle n'est pas final).
+
+Y a aussi la visiblité protected, normale. Pas de "_" devant les attributs protected. 
+
+Abstract ==> ok
+final class ==> ok
+méthode final ==> (rappel) si on déclare une méthode finale, toute classe fille de la classe
+comportant cette méthode héritera de cette méthode, MAIS NE POURRA PAS LA REDEFINIR.
+
+--------------------------------------------------------------------------------------------------------------------------------------
+RESOLUTION STATIQUE A LA VOLEE
+
+Il y a une possibilité intéressante de la POO en PHP : La résolution statique à la volée. 
+
+Réf classes (self::)
+
+En ce qui concerne la résolution statique à la volée, tout tourne autour de static:: qui a exactement le même effet que self::, à
+l'exception près que static:: appelle l'élément de la classe qui est appelée pendant l'exécution. C'est-à-dire que, dans mon 
+exemple, j'appelle la méthode lancerTest() depuis la classe enfant (Guerrier), et que dans cette méthode j'utilise static:: au 
+lieu de self::, c'est la méthode quiEstCe() de la classe enfant (Guerrier)  qui sera appelée et non la classe mère (Personnage).
+
+Note : Dans mes premiers exemples, j'ai utilisé des méthodes qui sont appelées dans un contexte statique. Mais cela marche
+également pour les méthodes non statiques. En effet, la résolution statique à la volée a exactement le même effet quand on
+crée un objet puis qu'on appelle une méthode de celui-ci. Il n'est donc pas du tout obligatoire de rendre les méthodes statiques 
+pour pouvoir y placer static::. Ainsi, si je teste ce code, à l'écran s'affichera la même chose que précédemment : 
+
+Réf classes.php => whoIsIt()
+
+Attention : si je casse la chaîne en appelant une méthode depuis une instance ou statiquement du genre Classe::methode(), 
+la méthode appelée par static:: sera celle de la classe contenant ce code !
+
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+frontend_home:
+    path: /{page}
+    defaults: 
+        _controller: Frontend:News:index
+        page: 1
+    requirements:
+        page: \d*
+
+frontend_news_show:
+    path: /news/{id}
+    defaults: 
+         _controller: Frontend:News:show 
+    requirements:
+        id: \d+
+
+frontend_news_insertcomment:
+    path: /comment-{news}/{comm}
+    defaults: 
+        _controller: Frontend:News:insertComment
+    requirements:
+        news: \d+
+        comm: \d*
+        
+frontend_member_signup: 
+    path: /sign-up
+    defaults: 
+        _controller: Frontend:Member:signUp
+     
+frontend_member_connect:
+    path: /member-connexion
+    defaults: 
+        _controller: Frontend:Member:connect
+        
+frontend_member_connect:
+    path: /member-disconnect
+    defaults:
+        _controller: Frontend:Member:disconnect
+        
+frontend_member_index:
+    path: /member-area
+    defaults: 
+        _controller: Frontend:Member:index 
+  
+frontend_member_changepassword:
+    path: /member-area/change-password
+    defaults: 
+         _controller: Frontend:Member:changePassword 
+    
+frontend_member_updatemember: 
+    path: /member-area/update-password
+    defaults: 
+         _controller: Frontend:Member:updatePassword 
+    
+frontend_member_delete:
+    path: /member-area/delete
+    defaults: 
+        _controller: Fronend:Member:delete 
+        
+frontend_member_invitefriend:
+    path: /member-area/invite-friend/{id}
+    defaults:
+        _controller: Frontend:Member:disconnect
+    requirements:
+        id: \d+
+        
+frontend_news_delete:
+    path: /member-area-{mem}/news-delete/{id}
+    defaults:
+        _controller: Frontend:News:delete
+    requirements:
+        mem: \d+
+        id: \d+
+        
+frontend_news_updatecomment:
+    path: /member-area-{mem}/comment-update/{id}
+    defaults:
+        _controller: Frontend:News:updateComment
+    requirements:
+        mem: \d+
+        id: \d+
+        
+frontend_news_deletecomment:
+    path: /member-area-{mem}/comment-delete/{id}
+    defaults:
+        _controller: Frontend:News:deleteComment
+    requirements:
+        mem: \d+
+        id: \d+
+        
+frontend_news_insert:
+    path: /member-area-{mem}/news-insert
+    defaults:
+        _controller: Frontend:News:insert
+    requirements: 
+        mem: \d+
+        
+frontend_news_update:
+    path: /member-area-{mem}/news-update/{id}
+    defaults:
+        _controller: Frontend:News:update
+    requirements:
+        mem: \d+
+        id: \d+    

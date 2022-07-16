@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes>
+	<route url="/([0-9]*)" module="News" action="index" vars="page" />
+	<route url="/news-([0-9]+)\.html" module="News" action="show" vars="id" />
+	<route url="/commenter-([0-9]+)(?:-([0-9]+))?\.html" module="News" action="insertComment" vars="news,comm" />
+	<route url="/inscription.html" module="Member" action="addMember" />
+	<route url="/member-connexion.html" module="Member" action="connect" />
+	<route url="/member-disconnect.html" module="Member" action="disconnect" />
+	<route url="/espace-membre/" module="Member" action="index" />
+	<route url="/espace-membre/change-password.html" module="Member" action="changePassword" />
+	<route url="/espace-membre/update-member.html" module="Member" action="updateMember" />
+	<route url="/espace-membre/delete.html" module="Member" action="delete" />	
+</routes>

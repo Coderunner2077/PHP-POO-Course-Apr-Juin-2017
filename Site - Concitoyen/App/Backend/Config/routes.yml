@@ -1,0 +1,42 @@
+backend_home:
+    path: /admin
+    defaults: 
+        _controller: Backend:News:index
+        
+backend_admin_deauthenticate:
+    path: /admin/deconnecter
+    defaults:
+        _controller: Backend:News:deauthenticate
+        
+backend_news_delete:
+    path: /admin/news-delete/{id}
+    defaults:
+        _controller: Backend:News:delete
+    requirements:
+        id: \d+
+        
+backend_news_updatecomment:
+    path: /admin/comment-update/{id}
+    defaults:
+        _controller: Backend:News:updateComment
+    requirements:
+        id: \d+
+        
+backend_news_deletecomment:
+    path: /admin/comment-delete/{id}
+    defaults:
+        _controller: Backend:News:deleteComment
+    requirements:
+        id: \d+
+        
+backend_news_insert:
+    path: /admin/news-insert
+    defaults:
+        _controller: Backend:News:insert
+        
+backend_news_update:
+    path: /admin/news-update/{id}
+    defaults:
+        _controller: Backend:News:update
+    requirements:
+        id: \d+
